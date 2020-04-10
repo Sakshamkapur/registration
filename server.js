@@ -1,14 +1,14 @@
 var express= require("express");
 const bodyParser = require('body-parser');
 const expressip = require('express-ip');
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+const request = require('request');
 var mongoose = require('mongoose');
-var users = express.Router();
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bcrypt = require('bcryptjs');
-const saltRounds = 5;
 var jwt = require('jsonwebtoken');
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
+const saltRounds = 5;
 var token,IP_ADDRESS;
 process.env.SECRET_KEY='sak';
 var app = express();
@@ -78,6 +78,30 @@ app.get('/users/',sessionChecker, function(req,res){
       res.render('users.ejs',{row: data});
   });
 });
+
+app.post('/verify',urlencodedParser,function(req,res){
+    if(!req.body.response){
+        res.json({"success":false, "msg":"Capctha is not checked"});
+    }
+
+    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=6LeOhOgUAAAAANDRrn9NPLHZcwAALz0ZgBNtCxl4&response=${req.body.response}`;
+
+    request(verifyUrl,(err,response,body)=>{
+
+        if(err)throw err;
+
+        body = JSON.parse(body);
+
+        if(!body.success && body.success === undefined){
+            return res.json({"success":false, "msg":"captcha verification failed"});
+        }
+        else if(body.score < 0.5){
+            return res.json({"success":false, "msg":"you might be a bot, sorry!", "score": body.score});
+        }
+        
+        res.json({"success":true, "msg":"captcha verification passed", "score": body.score});
+    })
+})
 
 // register post
 app.post('/register_details',urlencodedParser,function(req,res){
