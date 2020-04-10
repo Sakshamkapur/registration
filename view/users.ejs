@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Users</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/users.css">
+</head>
+<body>
+    <div class="logo-container">
+        <h1 class="Logos">Users</h1>
+        <div class="topright">
+            <button class="logoutbtn">Logout</button>
+        </div>
+        <ul>
+            <% for(var i=0;i< row.length; i++){ %>
+                <li>
+                <div class="logo-holder logo-1">
+                    <a href="">
+                    <h3><%= row[i].name %></h3>
+                    <p><%= row[i].email %></p>
+                    </a>
+                </div>
+                </li>
+            <% } %>
+        </ul>
+      </div>
+</body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>   
+    <script type="text/javascript" src="/assets/js/users.js"></script>
+</html>
